@@ -1,0 +1,6 @@
+jdk.zip
+jdk17/
+*.zip
+target/
+.vscode/
+*.log

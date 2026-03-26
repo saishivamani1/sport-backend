@@ -1,0 +1,79 @@
+# SPORTS HUB - FRONTEND APPLICATION FLOW & API MAPPING
+
+This document outlines the powerful, role-based architecture for the Sports Hub frontend application, mapping directly to the backend capabilities.
+
+## 1. PUBLIC & AUTHENTICATION FLOW
+**Description:** The gateway to the application for guests and returning users.
+
+*   **Pages:**
+    *   `Landing Page (/)`: Introduction and marketing for the Sports Hub.
+    *   `Register Page (/register)`: Form to sign up as Athlete, Coach, Scout, or Sponsor.
+    *   `Login Page (/login)`: User authentication.
+    *   `Public Feed (/feed)`: View the latest approved athlete achievements.
+    *   `Public Tournaments (/tournaments)`: Browse active tournaments.
+
+*   **API Tasks:**
+    *   `POST /auth/register` -> Creates the user account.
+    *   `POST /auth/login` -> Authenticates and retrieves the JWT token (store in localStorage/HttpOnly Cookie).
+    *   `GET /posts/feed` -> Fetches the public timeline of approved athletic achievements.
+    *   `GET /tournaments` -> Fetches the list of all tournaments.
+    *   `GET /tournaments/{id}` -> Fetches details for a specific tournament.
+
+---
+
+## 2. ATHLETE FLOW
+**Description:** Tools for athletes to build credibility, post achievements, and join competitions.
+
+*   **Pages:**
+    *   `Athlete Dashboard (/athlete/dashboard)`: Overview of verification status and recent activity.
+    *   `Verification Center (/athlete/verification)`: Form to upload ID proofs.
+    *   `My Achievements (/athlete/posts)`: Manage own posts and submit new ones.
+    *   `Tournament Application Modal`: Apply to join a selected tournament.
+
+*   **API Tasks:**
+    *   `GET /verification/status` -> Fetches the athlete's current credibility and verification state.
+    *   `POST /verification/submit-id` -> Submits ID documents for admin review.
+    *   `GET /posts/my-posts` -> Retrieves all posts submitted by the athlete (approved, pending, rejected).
+    *   `POST /posts/submit` -> Submits a new achievement post to the moderation queue.
+    *   `POST /tournaments/{id}/apply` -> Registers the athlete for a tournament.
+
+---
+
+## 3. DISCOVERY FLOW (SCOUTS, SPONSORS, COACHES)
+**Description:** Dedicated interface for talent seekers to find verified athletes based on sport and credibility.
+
+*   **Pages:**
+    *   `Discovery Dashboard (/discovery)`: Search interface with filters (Sport, Min Credibility Score).
+    *   `Athlete Profile (/athlete/{id})`: Detailed view of an athlete's stats, verifications, and feed.
+
+*   **API Tasks:**
+    *   `GET /athletes?sport={sport}&minCredibility={score}` -> Fetches a filtered list of verified athletes.
+    *   `GET /athletes/{id}` -> Fetches the full profile details of a specific athlete.
+
+---
+
+## 4. ADMIN & MODERATION FLOW
+**Description:** Operations dashboard for administrators to maintain platform integrity, moderate content, and organize events.
+
+*   **Pages:**
+    *   `Admin Dashboard (/admin/dashboard)`: System-wide metrics.
+    *   `Verification Queue (/admin/verifications)`: List of athletes awaiting ID approval.
+    *   `Content Moderation (/admin/posts)`: Queue of pending achievement posts.
+    *   `Tournament Management (/admin/tournaments)`: Form to create and manage new tournaments.
+
+*   **API Tasks:**
+    *   `GET /admin/verifications/pending` -> Fetches all pending ID submissions.
+    *   `PUT /admin/verifications/{id}/approve` -> Approves an athlete's verification (increases credibility).
+    *   `PUT /admin/verifications/{id}/reject?reason={reason}` -> Rejects an athlete's verification.
+    *   `GET /admin/posts/pending` -> Fetches all pending achievement posts from athletes.
+    *   `PUT /admin/posts/{id}/approve` -> Approves a post to appear on the public feed.
+    *   `PUT /admin/posts/{id}/reject?reason={reason}` -> Rejects an inappropriate post.
+    *   `POST /tournaments` -> Creates a new tournament in the system.
+
+---
+
+## NEXT STEPS FOR FRONTEND DEVELOPMENT:
+1. Initialize project (React/Next.js or Vue/Nuxt).
+2. Setup Axios/React Query instance with a JWT interceptor (to automatically attach `Authorization: Bearer <token>` to requests from `localStorage`).
+3. Build the UI components following the design system.
+4. Implement React Router (or equivalent) guarding routes based on the user's `Role` (Athlete, Admin, Scout, etc.) returned from the Login API.
